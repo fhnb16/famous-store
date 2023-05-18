@@ -1,25 +1,77 @@
 <script setup>
-import { reactive, onMounted  } from 'vue';
+import { reactive, onMounted, computed, toRefs } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { notify } from "@kyvg/vue3-notification";
+
+import { storeToRefs } from 'pinia';
+import { useMainStore } from '@/stores/main.js';
+
+const { itemsList, catsList, cartItems, searchQuery } = storeToRefs(useMainStore());
+//const { fetchPosts } = useMainStore();
+
 const state = reactive({
   menuActive: false,
-  searchQuery: "",
+  searchValue: "",
+  stickyFooter: ""
 });
 
+const { stickyFooter } = toRefs(state);
+
 onMounted(() => {
-  notify({
-    title: "Important message",
-    text: "Hello user!",
-  });
+  getItems();
 })
 
 function notifySearch() {
+  /*notify({
+    title: "Поиск",
+    text: "Запрос: " + state.searchQuery,
+  });*/
+  searchQuery.value = state.searchValue;
+}
+
+function getItems() {
+  fetch('//famous.fhnb.ru/json/data.json')
+    .then(response => response.json())
+    .then(function (data) {
+      const json = data;
+      itemsList.value = json.Items;
+      catsList.value = json.Categories;
+    })
+}
+
+function listItemsInCart() {
+  var ItemsInCart = "<ui>";
+    var filteredCart = itemsList.value.filter(itm => cartItems.value.includes(itm.id));
+    filteredCart.forEach(function(item) {
+      ItemsInCart += "<li>" + item.title + "</li>";
+    });
+  ItemsInCart += "</ui>";
+  if (ItemsInCart == "<ui></ui>") {
+    ItemsInCart = "В корзине пусто";
+  }
   notify({
-    title: "Search Request",
-    text: "Query: " + state.searchQuery,
+    title: "Корзина покупок",
+    text: ItemsInCart,
   });
 }
+
+/*const stickyFooter = computed(() => {
+  if () {
+    return "sticky";
+  } else {
+    return "";
+  }
+});*/
+
+/*window.addEventListener('resize', () => {
+  console.log(window.innerHeight, document.innerHeight)
+  if (window.innerHeight < document.innerHeight) {
+    stickyFooter.value = "sticky";
+  } else {
+    stickyFooter.value = "";
+  }
+});*/
+
 </script>
 
 <template>
@@ -48,21 +100,21 @@ function notifySearch() {
           </nav>
           <div class="searchAndCart right">
               <div class="searchWrapper">
-                  <input class="searchWrapper_textbox" type="text" placeholder="Поиск" v-model="state.searchQuery" />
+                  <input class="searchWrapper_textbox" type="text" placeholder="Поиск" v-model="state.searchValue" @keyup.enter="notifySearch" />
                   <a class="searchWrapper_button" v-on:click="notifySearch">Найти</a>
               </div>
-              <a class="cartButton" v-on:click="notify({title: 'Shopping Cart', text: 'Empty'})">
+              <a class="cartButton" v-on:click="listItemsInCart">
                   <svg width="24" height="24" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.75 7.33333V5.75C5.75 4.49022 6.25045 3.28204 7.14124 2.39124C8.03204 1.50045 9.24022 1 10.5 1C11.7598 1 12.968 1.50045 13.8588 2.39124C14.7496 3.28204 15.25 4.49022 15.25 5.75V7.33333M2.79167 7.33333C2.5817 7.33333 2.38034 7.41674 2.23187 7.56521C2.08341 7.71368 2 7.91504 2 8.125L1 18.8125C1 20.3088 2.27458 21.5833 3.77083 21.5833H17.2292C18.7254 21.5833 20 20.3706 20 18.8744L19 8.125C19 7.91504 18.9166 7.71368 18.7681 7.56521C18.6197 7.41674 18.4183 7.33333 18.2083 7.33333H2.79167Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
-                  <div class="badge">1</div>
+                  <div class="badge" v-if="cartItems.length > 0"> {{ cartItems.length }} </div>
               </a>
           </div>
       </header>
-      <div class="content">
+      <div class="content" id="content">
         <RouterView />
       </div>
-      <footer class="footer">
+      <footer class="footer" :class="stickyFooter">
           <nav class="navigation left">
               <ul class="menu">
                   <li><RouterLink to="/"><img src="//famous.fhnb.ru/img/theFamous.svg" /></RouterLink></li>
@@ -157,11 +209,11 @@ function notifySearch() {
 
 html, body {
   height: 100%;
+  overflow: auto;
+  overflow: overlay;
 }
 
 body {
-  overflow: auto;
-  overflow: overlay;
 }
 
 body,
@@ -204,10 +256,15 @@ body * {
     background: #ECEAEA;
     bottom: 0;
     left: 0;
+}
+
+.footer.sticky {
     position: fixed;
 }
 
 .content {
+  padding-bottom: 64px;
+  min-height: calc(100vh - 175px);
 }
 
 nav {
@@ -399,6 +456,11 @@ h6 {
     transition: background 128ms ease;
 }
 
+.searchWrapper .searchWrapper_button.inCart,
+.button.inCart {
+    background: #5B3A32;
+}
+
 .searchWrapper .searchWrapper_button:hover,
 .button:hover {
     background: #776763;
@@ -412,6 +474,19 @@ h6 {
 .searchWrapper .searchWrapper_button {
     height: 48px;
     padding: 14px 36px;
+}
+
+.items__item .button {
+    width: 118px;
+    height: 48px;
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+.items__item .button * {
+    pointer-events: none;
 }
 
 .cartButton {
@@ -644,6 +719,15 @@ h6 {
     .footer, .header {
       height: 64px;
     }
+
+    .footerContacts > span {
+      padding: 6px;
+    }
+
+    .footerContacts, .footerContacts > span {
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
     
 }
 
@@ -678,6 +762,10 @@ h6 {
     }
     .cartButton {
       margin-left: 8px;
+    }
+
+    .footerContacts, .footerContacts > span {
+      margin: auto;
     }
 }
 

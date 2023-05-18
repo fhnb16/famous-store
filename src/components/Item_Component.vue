@@ -17,7 +17,7 @@ const { item } = toRefs(props);
               <div class="items__item" v-bind:class="{'out_of_stock': !item.active}">
                   <div class="items__item_image"><img :src="item.image" /></div>
                   <div class="items__item_content">
-                      <h2>{{ item.title }}</h2>
+                      <h2 :title="item.title">{{ item.title }}</h2>
                       <div class="items__item_group">
                           <div class="items__item-vertical">
                               <div class="items__item-vertical_discount" v-if="item.active || item.discount != ''">
@@ -30,7 +30,7 @@ const { item } = toRefs(props);
                                   Продана на аукционе
                               </div>
                           </div>
-                          <a v-on:click="addToCart(item)" v-if="item.active" class="button" v-bind:class="{'inCart': cartItems.includes(item.id)}">
+                          <a v-on:click="addToCart($event, item);" v-if="item.active" class="button" v-bind:class="{'inCart': cartItems.includes(item.id)}">
                             <span v-if="cartItems.includes(item.id)">
                               <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M14.5315 1.80937L5.63341 11.237L1.34814 7.19237" stroke="#F4F6F9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -54,6 +54,23 @@ const { item } = toRefs(props);
 
 .items__item .button {
     padding: 14px 30px;
+    position: relative;
+}
+
+.items__item .button.busy {
+    background: #403432;
+    color: #403432;
+}
+
+.items__item .button.busy:after {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    inset: 0;
+    background-color: #403432;
+    background-image: url('//test.fhnb.ru/famous/img/loading.svg');
+    background-repeat: no-repeat;
+    background-position: center;
 }
 
 .items__item.out_of_stock {
@@ -62,12 +79,26 @@ const { item } = toRefs(props);
 
 .items__item_content {
     padding: 12px 24px;
+    height: 168px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.items__item_content h2 {
+  max-height: 64px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  white-space: normal;
 }
 
 .items__item_image {
     width: 100%;
     height: 160px;
-    margin-bottom: 8px;
+    /*margin-bottom: 8px;*/
 }
 
 .items__item_image img {

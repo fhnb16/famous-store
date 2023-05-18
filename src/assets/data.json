@@ -4,7 +4,7 @@
       "id": 346,
       "category": 1,
       "title": "«Рождение Венеры» Сандро Боттичелли",
-      "image": "//famous.fhnb.ru/img/item4.jpg",
+      "image": "//test.fhnb.ru/famous/img/item4.jpg",
       "price": "1 000 000",
       "discount": "2 000 000",
       "active": true
@@ -13,7 +13,7 @@
       "id": 753,
       "category": 1,
       "title": "«Тайная вечеря» Леонардо да Винчи",
-      "image": "//famous.fhnb.ru/img/item2.jpg",
+      "image": "//test.fhnb.ru/famous/img/item2.jpg",
       "price": "3 000 000",
       "discount": "",
       "active": true
@@ -22,7 +22,7 @@
       "id": 145,
       "category": 1,
       "title": "«Сотворение Адама» Микеланджело",
-      "image": "//famous.fhnb.ru/img/item3.jpg",
+      "image": "//test.fhnb.ru/famous/img/item3.jpg",
       "price": "5 000 000",
       "discount": "6 000 000",
       "active": true
@@ -31,7 +31,7 @@
       "id": 654,
       "category": 1,
       "title": "«Урок анатомии» Рембрандт",
-      "image": "//famous.fhnb.ru/img/item1.jpg",
+      "image": "//test.fhnb.ru/famous/img/item1.jpg",
       "price": "2 000 000",
       "discount": "",
       "active": false

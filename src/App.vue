@@ -1,5 +1,5 @@
 <script setup>
-import { reactive, onMounted, computed, toRefs } from 'vue';
+import { reactive, onMounted, toRefs } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
 import { notify } from "@kyvg/vue3-notification";
 
@@ -18,8 +18,17 @@ const state = reactive({
 const { stickyFooter } = toRefs(state);
 
 onMounted(() => {
+  var cartSaved = JSON.parse(localStorage.getItem('cart'));
+  if (cartSaved !== null) {
+    cartItems.value = cartSaved;
+  }
   getItems();
 })
+
+/*watch(cartItems, (newValue, oldValue) => {
+  console.log(newValue, oldValue);
+  console.log('changed');
+});*/
 
 function notifySearch() {
   /*notify({
@@ -30,7 +39,7 @@ function notifySearch() {
 }
 
 function getItems() {
-  fetch('//famous.fhnb.ru/json/data.json')
+  fetch('//test.fhnb.ru/famous/json/data.json')
     .then(response => response.json())
     .then(function (data) {
       const json = data;
@@ -78,7 +87,7 @@ function listItemsInCart() {
       <header class="header">
           <nav class="navigation left">
               <ul class="menu">
-                  <li><RouterLink to="/"><img src="//famous.fhnb.ru/img/theFamous.svg" /></RouterLink></li>
+                  <li><RouterLink to="/"><img src="//test.fhnb.ru/famous/img/theFamous.svg" /></RouterLink></li>
                   <li class="hamburger menuBtn" v-on:click="state.menuActive = !state.menuActive" v-bind:class="{'ham-cross': state.menuActive}">
                     <svg viewBox="0 0 71 64">
                       <defs>
@@ -117,7 +126,7 @@ function listItemsInCart() {
       <footer class="footer" :class="stickyFooter">
           <nav class="navigation left">
               <ul class="menu">
-                  <li><RouterLink to="/"><img src="//famous.fhnb.ru/img/theFamous.svg" /></RouterLink></li>
+                  <li><RouterLink to="/"><img src="//test.fhnb.ru/famous/img/theFamous.svg" /></RouterLink></li>
                   <li><RouterLink to="/">Каталог</RouterLink></li>
                   <li><RouterLink to="/test">Доставка</RouterLink></li>
                   <li><RouterLink to="/test">Оплата</RouterLink></li>
@@ -136,7 +145,7 @@ function listItemsInCart() {
                   <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.07028 0C2.27451 0 0 2.27451 0 5.07025C0 8.53985 4.5374 13.6334 4.73058 13.8486C4.91204 14.0507 5.22884 14.0503 5.40997 13.8486C5.60315 13.6334 10.1406 8.53985 10.1406 5.07025C10.1405 2.27451 7.86601 0 5.07028 0ZM5.07028 7.62123C3.66366 7.62123 2.51932 6.47687 2.51932 5.07025C2.51932 3.66363 3.66368 2.51929 5.07028 2.51929C6.47687 2.51929 7.6212 3.66366 7.6212 5.07028C7.6212 6.47689 6.47687 7.62123 5.07028 7.62123Z" fill="currentColor"/>
                   </svg>
-                  <div>г. Екатеринбург ул. Генеральская, 3</div>
+                  <div>г. Воронеж, ул. Никитина, 119А</div>
               </span>
           </div>
       </footer>
@@ -157,18 +166,22 @@ function listItemsInCart() {
   cursor: default;
   outline: inherit;
   text-decoration: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   -webkit-user-drag: none;
   -khtml-user-drag: none;
   -moz-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
 }
+
+*:not([type='text']) {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 *, ::after, ::before {
   box-sizing: border-box;
 }
@@ -190,13 +203,13 @@ function listItemsInCart() {
     width: 4px;
     min-height: 32px;
     z-index: 12;
-    background_image: none;
+    background-image: none;
     background-color: rgba(67, 73, 83,.6);
     background-clip: padding-box;
     border-width: 3px;
     border-style: solid;
     border-color: transparent;
-    border_image: initial;
+    border-image: initial;
     border-radius: 10px;
     transition: background-color 0.32s ease-in-out 0s;
 }
@@ -209,11 +222,12 @@ function listItemsInCart() {
 
 html, body {
   height: 100%;
-  overflow: auto;
-  overflow: overlay;
+  overflow: hidden;
 }
 
 body {
+  display: flex;
+  flex-direction: column;
 }
 
 body,
@@ -224,17 +238,19 @@ body * {
 
 #app {
     width: 100%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: space-between;
-    padding-bottom: 100px;
     background: #ffffff;
+    overflow-y: auto;
+    overflow-y: overlay;
 }
 
 #app > * {
-    padding-left: 18%;
-    padding-right: 18%;
+    padding-left: 14%;
+    padding-right: 14%;
 }
 
 .footer, .header {
@@ -244,6 +260,7 @@ body * {
     flex-wrap: nowrap;
     align-items: center;
     width: 100%;
+    flex-shrink: 0;
 }
 
 .header {
@@ -263,8 +280,8 @@ body * {
 }
 
 .content {
-  padding-bottom: 64px;
-  min-height: calc(100vh - 175px);
+  flex: 1 0 auto;
+  /*min-height: calc(100vh - 175px);*/
 }
 
 nav {
@@ -759,6 +776,7 @@ h6 {
     .footerContacts, .footerContacts > span {
         flex-direction: column;
         white-space: pre-wrap;
+        flex-flow: wrap;
     }
     .cartButton {
       margin-left: 8px;

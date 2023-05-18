@@ -3,9 +3,10 @@ import { toRefs } from 'vue';
 import Item from '@/components/Item_Component.vue';
 const props = defineProps({
   itemsList: [],
-  catID: Number
+  catID: Number,
+  catName: String
 });
-const { itemsList, catID } = toRefs(props);
+const { itemsList, catID, catName } = toRefs(props);
 
 function filterCategory(){
   if (itemsList.value != undefined) {
@@ -18,7 +19,8 @@ function filterCategory(){
 
 <template>
           <div class="items">
-          	<Item v-for="item in filterCategory()" :key="item.id" :item="item" />
+            <h1>{{ catName }}</h1>
+            <Item v-for="item in filterCategory()" :key="item.id" :item="item" />
           </div>
 </template>
 
@@ -27,8 +29,13 @@ function filterCategory(){
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-bottom: 32px;
 }
+ .items h1 {
+    width: 100%;
+ }
+ .items h1:only-child {
+    display: none;
+ }
 
 @media screen and (max-width: 1100px)
 {

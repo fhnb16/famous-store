@@ -22,7 +22,9 @@ function filteredList(){
 
 <template>
           <div class="category" v-for="category in catsList" :key="category.id">
-            <h1>{{ category.name }}</h1>
-            <Items :itemsList="filteredList()" :catID="category.id" />
+            <Items :itemsList="filteredList()" :catID="category.id" :catName="category.name" />
           </div>
 </template>
+
+<style scoped>
+</style>

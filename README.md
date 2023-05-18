@@ -1,9 +1,10 @@
 # The Famous store
 
-[![Vue 3.2.47](https://img.shields.io/badge/Vue-3.2.47-1f75fe.svg?style=plastic&labelColor=2e3943)](https://vuejs.org/guide/)
+[![Vue 3.3.2](https://img.shields.io/badge/Vue-3.3.2-1f75fe.svg?style=plastic&labelColor=2e3943)](https://vuejs.org/guide/)
 [![Vue CLI 5.0.8](https://img.shields.io/badge/Vue_CLI-5.0.8-1f75fe.svg?style=plastic&labelColor=2e3943)](https://cli.vuejs.org/)
-[![Vuex 4.1.0](https://img.shields.io/badge/Vuex-4.1.0-1f75fe.svg?style=plastic&labelColor=2e3943)](https://v4.vuex.vuejs.org/)
-[![vue-timer-hook 1.0.66](https://img.shields.io/badge/vue--timer--hook-1.0.66-1f75fe.svg?style=plastic&labelColor=2e3943)](https://github.com/riderx/vue-timer-hook)
+[![Vue Router 4.2.0](https://img.shields.io/badge/Vue_Router-4.2.0-1f75fe.svg?style=plastic&labelColor=2e3943)](https://router.vuejs.org/)
+[![Pinia 2.0.36](https://img.shields.io/badge/Pinia-2.0.36-1f75fe.svg?style=plastic&labelColor=2e3943)](https://pinia.vuejs.org/)
+[![@kyvg/vue3-notification 2.9.1](https://img.shields.io/badge/vue3--notification-2.9.1-1f75fe.svg?style=plastic&labelColor=2e3943)](https://github.com/kyvg/vue3-notification)
 
 ## Онлайн-витрина, верстка + vue
 
@@ -13,7 +14,7 @@
 |---|---|
 | ![Mobile preview image](images/preview.png) | <video src="https://user-images.githubusercontent.com/1816594/239395068-7af782ef-9fdd-42c9-b9b1-2226ddf9c011.MP4"></video> |
 
-<center>![Desktop preview image](images/desktop.png)</center>
+![Desktop preview image](images/desktop.png)
 
 [Figma with design](https://www.figma.com/file/vICMEmfQGTVqBeWJSyBnST/Untitled?node-id=0%3A1&t=Vzp9mrFa2x4R8sOD-0)
 

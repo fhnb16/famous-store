@@ -1,9 +1,25 @@
 <script setup>
-import { reactive } from 'vue';
+import { reactive, onMounted  } from 'vue';
 import { RouterLink, RouterView } from 'vue-router';
+import { notify } from "@kyvg/vue3-notification";
 const state = reactive({
   menuActive: false,
+  searchQuery: "",
 });
+
+onMounted(() => {
+  notify({
+    title: "Important message",
+    text: "Hello user!",
+  });
+})
+
+function notifySearch() {
+  notify({
+    title: "Search Request",
+    text: "Query: " + state.searchQuery,
+  });
+}
 </script>
 
 <template>
@@ -11,11 +27,18 @@ const state = reactive({
           <nav class="navigation left">
               <ul class="menu">
                   <li><RouterLink to="/"><img src="//famous.fhnb.ru/img/theFamous.svg" /></RouterLink></li>
-                  <li class="menuBtn" v-on:click="state.menuActive = !state.menuActive">
-                    <svg width="28px" height="28px" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" fill="currentColor"/></svg>
+                  <li class="hamburger menuBtn" v-on:click="state.menuActive = !state.menuActive" v-bind:class="{'ham-cross': state.menuActive}">
+                    <svg viewBox="0 0 71 64">
+                      <defs>
+                        <path d="M28,22 56,22 C74,22 64,54 52,42 L30,20" id="ham-edge"></path>
+                      </defs>
+                      <use x="0" y="0" id="ham-edge1" xlink:href="#ham-edge"></use>
+                      <path d="M28,32 L56,32" id="ham-mid"></path>
+                      <use x="0" y="0" id="ham-edge2" xlink:href="#ham-edge" transform="translate(48, 32) scale(1, -1) translate(-48, -32)"></use>
+                    </svg>
                   </li>
                   <div v-bind:class="{ 'collapsable': !state.menuActive }">
-                    <li><RouterLink to="/" class="active">Каталог</RouterLink></li>
+                    <li><RouterLink to="/">Каталог</RouterLink></li>
                     <li><RouterLink to="/test">Доставка</RouterLink></li>
                     <li><RouterLink to="/test">Оплата</RouterLink></li>
                     <li><RouterLink to="/test">Контакты</RouterLink></li>
@@ -25,10 +48,10 @@ const state = reactive({
           </nav>
           <div class="searchAndCart right">
               <div class="searchWrapper">
-                  <input class="searchWrapper_textbox" type="text" placeholder="Поиск" />
-                  <a class="searchWrapper_button" href="#">Найти</a>
+                  <input class="searchWrapper_textbox" type="text" placeholder="Поиск" v-model="state.searchQuery" />
+                  <a class="searchWrapper_button" v-on:click="notifySearch">Найти</a>
               </div>
-              <a class="cartButton" href="#">
+              <a class="cartButton" v-on:click="notify({title: 'Shopping Cart', text: 'Empty'})">
                   <svg width="24" height="24" viewBox="0 0 21 23" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M5.75 7.33333V5.75C5.75 4.49022 6.25045 3.28204 7.14124 2.39124C8.03204 1.50045 9.24022 1 10.5 1C11.7598 1 12.968 1.50045 13.8588 2.39124C14.7496 3.28204 15.25 4.49022 15.25 5.75V7.33333M2.79167 7.33333C2.5817 7.33333 2.38034 7.41674 2.23187 7.56521C2.08341 7.71368 2 7.91504 2 8.125L1 18.8125C1 20.3088 2.27458 21.5833 3.77083 21.5833H17.2292C18.7254 21.5833 20 20.3706 20 18.8744L19 8.125C19 7.91504 18.9166 7.71368 18.7681 7.56521C18.6197 7.41674 18.4183 7.33333 18.2083 7.33333H2.79167Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                   </svg>
@@ -65,16 +88,7 @@ const state = reactive({
               </span>
           </div>
       </footer>
-      <div class="notify">
-          <div class="notify__item">
-              <div class="notify__item_title">
-                  Title
-              </div>
-              <div class="notify__item_content">
-                  Content
-              </div>
-          </div>
-      </div>
+      <notifications clean="true" closeOnClick="true" position="bottom left" class="notify" classes="notify__item" />
 </template>
 
 <style>
@@ -229,7 +243,9 @@ nav ul a {
     transition: color 256ms ease, opacity 128ms ease;
 }
 
-nav ul a.active {
+nav ul a.active,
+.router-link-active,
+.router-link-exact-active {
     cursor: default!important;
     color: #9F9F9F!important;
 }
@@ -240,6 +256,35 @@ nav ul a:hover {
 
 nav ul a:active:not(.active) {
     opacity: 0.64;
+}
+
+nav ul a {
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    font-weight: 600;
+}
+
+nav ul a:hover {
+    text-decoration: none;
+    color: #000;
+}
+
+nav ul a:not(.router-link-active)::after,
+nav ul a:not(.router-link-exact-active)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 0%;
+    height: 100%;
+    border-bottom: .1rem solid #323232;
+    transition: width .25s ease;
+}
+
+nav ul a:hover::after {
+    left: 0;
+    width: 100%;
 }
 
 nav ul img {
@@ -449,98 +494,108 @@ h6 {
     margin-right: 8px;
 }
 
-.items {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    margin-bottom: 32px;
+.collapsable {
+  height: auto;
+  opacity: 1;
 }
 
-.items .items__item {
-    width: 280px;
-    height: 328px;
-    margin: 16px;
-    border: 1px solid #E1E1E1;
-    border-radius: 2px;
+.menuBtn,
+.menuBtn * {
+  display: none;
+  cursor: pointer;
 }
 
-.items .items__item .button {
-    padding: 14px 30px;
+.hamburger {
+  width: 71px;
+  cursor: pointer;
+}
+.hamburger path {
+  fill: none;
+  transition: stroke-dashoffset 0.5s cubic-bezier(0.25, -0.25, 0.75, 1.25), stroke-dasharray 0.5s cubic-bezier(0.25, -0.25, 0.75, 1.25);
+  stroke-width: 4px;
+  stroke: #000;
+  stroke-dashoffset: 0;
 }
 
-.items .items__item.out_of_stock {
-    opacity: 0.64;
+#ham-edge {
+  stroke-dasharray: 28px 96px;
 }
 
-.items .items__item_content {
-    padding: 12px 24px;
+#ham-mid {
+  stroke-dasharray: 28px 28px;
+  stroke-dashoffset: 0;
+  transition: all 0.2s linear;
+  opacity: 1;
 }
 
-.items .items__item_image {
-    width: 100%;
-    height: 160px;
-    margin-bottom: 8px;
+.ham-cross #ham-edge, .ham-cross #ham-edge1, .ham-cross #ham-edge2 {
+  stroke-dashoffset: -66.5px;
+}
+.ham-cross #ham-mid {
+  opacity: 0;
+  stroke-dashoffset: -7.8px;
+  stroke-dasharray: 1px 22px;
 }
 
-.items .items__item_image img {
-    width: 100%;
-    height: 100%;
-    border-radius: 2px;
-    object-fit: cover;
-}
+/*.notify,
+.notify * {
+  box-sizing: border-box;
+  color: inherit;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  cursor: default;
+  background: none;
+  outline: inherit;
+  text-decoration: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}*/
 
-.items .items__item_group {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    margin: 22px 6px;
-    height: 48px;
-}
-
-.items .items__item-vertical {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    justify-content: center;
-}
-
-.items .items__item-vertical > * {
-    font-style: normal;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 150%;
-}
-
-.items .items__item-vertical_discount {
-    font-style: normal;
-    font-weight: 300;
-    font-size: 14px;
-    line-height: 150%;
-    display: flex;
-    align-items: center;
-    text-decoration-line: line-through;
-    color: #A0A0A0;
-}
-
-.notify {
+.notify,
+.vue-notification-group {
     position: fixed;
-    right: 0;
+    left: 0;
     bottom: 0;
     z-index: 12;
     padding: 4px!important;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
 }
 
-.notify__item {
+.notify:empty {
+    z-index: -2;
+    height: 0;
+    width: 0;
+    display: none;
+}
+
+.notify__item,
+.vue-notification-template {
     padding: 1px;
     margin: 4px 8px;
-    background: #5B3A32a1;
+    background: #5B3A32a1!important;
     backdrop-filter: blur(6px);
     border-radius: 4px;
     color: #ffffff;
     min-width: 128px;
+    max-width: 333px;
+    pointer-events: auto;
 }
 
-.notify__item_title {
+.notify .notify__item_title,
+.notification-title {
     padding: 6px 24px;
     border-top-right-radius: 4px;
     border-top-left-radius: 4px;
@@ -550,22 +605,13 @@ h6 {
     
 }
 
-.notify__item_content {
+.notify .notify__item_content,
+.notification-content {
     padding: 6px 24px;
     border-bottom-right-radius: 4px;
     border-bottom-left-radius: 4px;
     font-size: 12px;
 
-}
-
-.collapsable {
-  height: auto;
-}
-
-.menuBtn,
-.menuBtn * {
-  display: none;
-  cursor: pointer;
 }
 
 @media screen and (max-width: 1800px)
@@ -618,9 +664,6 @@ h6 {
     .right {
         margin: auto;
     }
-    .items {
-        justify-content: center;
-    }
 }
 
 @media screen and (max-width: 800px)
@@ -633,6 +676,9 @@ h6 {
         flex-direction: column;
         white-space: pre-wrap;
     }
+    .cartButton {
+      margin-left: 8px;
+    }
 }
 
 @media screen and (max-width: 600px)
@@ -640,6 +686,7 @@ h6 {
 
     .collapsable {
       height: 0;
+      opacity: 0;
     }
 
     .menuBtn,
@@ -658,14 +705,50 @@ h6 {
 
     nav .menu > div {
         justify-content: center;
+        flex-direction: column;
+        width: 100%;
+        /*margin: 6px;*/
+    }
+
+    nav .menu > div li:first-child {
+        border: 1px solid #32323232;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    nav .menu > div li {
+        border-left: 1px solid #32323232;
+        border-right: 1px solid #32323232;
+        border-bottom: 1px solid #32323232;
+        min-width: 90%;
+        text-align: center;
+    }
+
+    nav .menu > div li:last-child {
+        border: 1px solid #32323232;
+        border-top: 0;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+    nav .menu > div li a {
+        width: 100%;
+        height: 100%;
+        display: inline-block;
     }
 
     nav ul li {
         padding: 6px;
     }
+
+    nav {
+        padding: 6px;
+        min-width: 85%;
+    }
     
     .searchWrapper .searchWrapper_textbox {
-        width: 100px;
+        width: 100%;
+        min-width: 70px;
         height: 34px;
     }
     

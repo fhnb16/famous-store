@@ -20,11 +20,11 @@ const { item } = toRefs(props);
                       <h2 :title="item.title">{{ item.title }}</h2>
                       <div class="items__item_group">
                           <div class="items__item-vertical">
-                              <div class="items__item-vertical_discount" v-if="item.active || item.discount != ''">
-                                  {{ item.discount }}
+                              <div class="items__item-vertical_discount" v-if="item.active && item.discount != ''">
+                                  {{ item.discount + ' $' }}
                               </div>
                               <div v-if="item.active">
-                                  {{ item.price }}
+                                  {{ item.price + ' $' }}
                               </div>
                               <div class="items__item-vertical_out" v-if="!item.active">
                                   Продана на аукционе

@@ -490,11 +490,11 @@ h6 {
 
 .searchWrapper .searchWrapper_button {
     height: 48px;
-    padding: 14px 36px;
+    padding: 14px 26px;
 }
 
 .items__item .button {
-    width: 118px;
+    width: 110px;
     height: 48px;
     padding: 4px;
     display: flex;
